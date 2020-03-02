@@ -3,7 +3,7 @@
 # @Email:  sibrahim1396@gmail.com
 # @Project: Audio Classifier
 # @Last modified by:   yusuf
-# @Last modified time: 2020-02-26T21:06:10+02:00
+# @Last modified time: 2020-03-02T07:27:54+02:00
 
 
 
@@ -17,6 +17,12 @@ def convolution1(image, kernel, stride=1, padding=0):
     image_size = image.shape[1]
     fmap_size = int((image_size-kernel_size+(2*padding))/stride)+1
     new_image = np.zeros((channels*kernel_size*kernel_size, fmap_size*fmap_size))
+    if padding>0:
+        temp = np.zeros((channels,image_size+2*padding,image_size+2*padding))
+        temp[:,padding:-padding,padding:-padding] = image
+        image = temp
+        image_size = image.shape[1]
+        del temp
     idx, ch = 0,0
     while ch<channels:
         row,idx = 0,0
@@ -38,6 +44,12 @@ def convolution2(image, kernel, stride=1, padding=0):
     kernel_size = kernel.shape[1]
     image_size = image.shape[1]
     fmap_size = int((image_size-kernel_size+(2*padding))/stride)+1
+    if padding>0:
+        temp = np.zeros((channels,image_size+2*padding,image_size+2*padding))
+        temp[:,padding:-padding,padding:-padding] = image
+        image = temp
+        image_size = image.shape[1]
+        del temp
     conv_matrix = np.zeros((fmap_size*fmap_size, image_size*image_size*channels))
     idx=0
     while row+kernel_size <= image_size:
