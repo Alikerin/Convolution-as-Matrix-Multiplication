@@ -3,7 +3,7 @@
 # @Email:  sibrahim1396@gmail.com
 # @Project: Audio Classifier
 # @Last modified by:   yusuf
-# @Last modified time: 2020-03-05T15:34:43+02:00
+# @Last modified time: 2020-03-05T15:59:44+02:00
 
 
 
@@ -14,12 +14,13 @@ import numpy as np
 def convolution1(image, kernel, stride=1, padding=0):
     channels = image.shape[0]
     no_kernels = kernel.shape[0]
-    kernel_size = kernel.shape[1]
+    kernel_width = kernel.shape[3]
+    kernel_height = kernel.shape[2]
     image_height = image.shape[1]
     image_width = image.shape[2]
-    fmap_h = int((image_height-kernel_size+(2*padding))/stride)+1
-    fmap_w = int((image_width-kernel_size+(2*padding))/stride)+1
-    new_image = np.zeros((channels*kernel_size*kernel_size, fmap_h*fmap_w))
+    fmap_h = int((image_height-kernel_height+(2*padding))/stride)+1
+    fmap_w = int((image_width-kernel_width+(2*padding))/stride)+1
+    new_image = np.zeros((channels*kernel_height*kernel_width, fmap_h*fmap_w))
     fmaps = []
     if padding>0:
         temp = np.zeros((channels,image_height+2*padding, image_width+2*padding))
@@ -31,10 +32,10 @@ def convolution1(image, kernel, stride=1, padding=0):
     idx, ch = 0,0
     while ch<channels:
         row,idx = 0,0
-        while row+kernel_size <= image_height:
+        while row+kernel_height <= image_height:
             col=0
-            while col+kernel_size <= image_width:
-                new_image[kernel_size*kernel_size*ch:kernel_size*kernel_size*ch+(kernel_size*kernel_size), idx] = (image[ch,row:row+kernel_size,col:col+kernel_size]).reshape(-1)
+            while col+kernel_width <= image_width:
+                new_image[kernel_height*kernel_width*ch:kernel_height*kernel_width*ch+(kernel_height*kernel_width), idx] = (image[ch,row:row+kernel_height,col:col+kernel_width]).reshape(-1)
                 idx+=1
                 col+=stride
             row+=stride
@@ -47,12 +48,13 @@ def convolution1(image, kernel, stride=1, padding=0):
 #An implementation of https://medium.com/activating-robotic-minds/up-sampling-with-transposed-convolution-9ae4f2df52d0
 def convolution2(image, kernel, stride=1, padding=0):
     channels = image.shape[0]
-    kernel_size = kernel.shape[1]
+    kernel_width = kernel.shape[3]
+    kernel_height = kernel.shape[2]
     no_kernels = kernel.shape[0]
     image_height = image.shape[1]
     image_width = image.shape[2]
-    fmap_h = int((image_height-kernel_size+(2*padding))/stride)+1
-    fmap_w = int((image_width-kernel_size+(2*padding))/stride)+1
+    fmap_h = int((image_height-kernel_height+(2*padding))/stride)+1
+    fmap_w = int((image_width-kernel_width+(2*padding))/stride)+1
     fmaps=[]
     if padding>0:
         temp = np.zeros((channels,image_height+2*padding,image_width+2*padding))
@@ -65,11 +67,11 @@ def convolution2(image, kernel, stride=1, padding=0):
         row, col = 0,0
         conv_matrix = np.zeros((fmap_h*fmap_w, image_height*image_width*channels))
         idx=0
-        while row+kernel_size <= image_height:
+        while row+kernel_height <= image_height:
             col=0
-            while col+kernel_size<=image_width:
+            while col+kernel_width<=image_width:
                 temp_kernel = np.zeros_like(image)
-                temp_kernel[:,row:row+kernel_size, col:col+kernel_size] = kernel[k]
+                temp_kernel[:,row:row+kernel_height, col:col+kernel_width] = kernel[k]
                 conv_matrix[idx] = temp_kernel.reshape(-1)
                 col+=stride
                 idx+=1
