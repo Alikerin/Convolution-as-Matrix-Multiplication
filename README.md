@@ -28,8 +28,3 @@ In the second implementation which was motivated by this article: https://medium
 
 ### Output:
 ![alt text](https://miro.medium.com/max/1200/1*ql2ZxrS_h8D7KHNCrGndug.png)
-
-The time complexity of both implementations are approximately:
-1. O(no_ch*fmap_size^2)
-2. O(fmap_size^2)
-where no_ch is the number of channels, which is 3 for RGB image_size and fmap_size is the feature map size

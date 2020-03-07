@@ -3,7 +3,7 @@
 # @Email:  sibrahim1396@gmail.com
 # @Project: Audio Classifier
 # @Last modified by:   yusuf
-# @Last modified time: 2020-03-05T15:59:44+02:00
+# @Last modified time: 2020-03-07T20:51:33+02:00
 
 
 
@@ -30,16 +30,14 @@ def convolution1(image, kernel, stride=1, padding=0):
         image_width = image.shape[2]
         del temp
     idx, ch = 0,0
-    while ch<channels:
-        row,idx = 0,0
-        while row+kernel_height <= image_height:
-            col=0
-            while col+kernel_width <= image_width:
-                new_image[kernel_height*kernel_width*ch:kernel_height*kernel_width*ch+(kernel_height*kernel_width), idx] = (image[ch,row:row+kernel_height,col:col+kernel_width]).reshape(-1)
-                idx+=1
-                col+=stride
-            row+=stride
-        ch+=1
+    row,idx = 0,0
+    while row+kernel_height <= image_height:
+        col=0
+        while col+kernel_width <= image_width:
+            new_image[:, idx] = (image[:,row:row+kernel_height,col:col+kernel_width]).reshape(-1)
+            idx+=1
+            col+=stride
+        row+=stride
     for k in range(no_kernels):
         fmap = (kernel[k].reshape(-1) @ new_image).reshape(fmap_h,fmap_w).astype(np.int)
         fmaps.append(fmap)
